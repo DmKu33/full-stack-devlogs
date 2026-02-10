@@ -12,30 +12,35 @@ import svelte from '@astrojs/svelte';
 // Docs https://astro.build/config
 export default defineConfig({
 	// Github Pages configuration
-	site: 'https://omundy.github.io',
-	base: '/dig345-radical-software',
+	site: 'https://DmKu33.github.io',
+	base: '/full-stack-devlogs',
 	integrations: [
 		starlight({
 			title: 'DIG 345 Radical Software',
 			logo: {
 				src: './public/images/simple-net-art-diagram/radical-software-icon.svg',
 			},
-			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/omundy/dig345-radical-software' }],
+			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/DmKu33/full-stack-devlogs' }],
 			editLink: {
-				baseUrl: 'https://omundy.github.io/dig345-radical-software',
+				baseUrl: 'https://github.com/DmKu33/full-stack-devlogs',
 			},
+			defaultLocale: 'root',
+			locales: {
+				root: {
+					label: 'English',
+					lang: 'en',
+				},
+			},
+			customCss: [
+				'./src/styles/custom.css',
+				'./src/styles/tailwind-overrides.css',
+			],
 			sidebar: [
-				// add sidebar links directly 
+				// add sidebar links directly
 				{ label: 'Syllabus', link: './' },
-				{ label: 'Assignments', link: './assignments' },
 
 				// autogenerate sidebar links using folder/file names
 				{ label: 'Schedule', autogenerate: { directory: 'schedule' }, },
-				{ label: 'Tutorials', autogenerate: { directory: 'tutorials' }, },
-			],
-			customCss: [
-				'./src/styles/custom.css', // relative path to custom CSS file
-				'./src/styles/tailwind-overrides.css', // fixes for tailwind CSS 
 			],
 			components: {
 				// override default Starlight components
