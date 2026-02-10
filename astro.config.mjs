@@ -16,9 +16,9 @@ export default defineConfig({
 	base: '/full-stack-devlogs',
 	integrations: [
 		starlight({
-			title: 'DIG 345 Radical Software',
+			title: 'full-stack devlogs',
 			logo: {
-				src: './public/images/simple-net-art-diagram/radical-software-icon.svg',
+				src: './public/favicon.svg',
 			},
 			social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/DmKu33/full-stack-devlogs' }],
 			editLink: {

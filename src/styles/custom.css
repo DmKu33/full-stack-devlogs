@@ -113,15 +113,15 @@ figure {
   --sl-color-gray-6: #707070;
   --sl-color-black: #e0e0e0;
 
-  --sl-color-accent-low: #1a2332;
-  --sl-color-accent: #4d7fa8;
-  --sl-color-accent-high: #6b9bc3;
+  --sl-color-accent-low: #2a2a2a;
+  --sl-color-accent: #999999;
+  --sl-color-accent-high: #cccccc;
 
   --sl-color-text: #e0e0e0;
-  --sl-color-text-accent: #6b9bc3;
+  --sl-color-text-accent: #cccccc;
 
   --sl-color-bg: #0a0a0a;
-  --sl-color-bg-nav: #111111;
+  --sl-color-bg-nav: #1a1a1a;
   --sl-color-bg-sidebar: #111111;
   --sl-color-bg-inline-code: #1a1a1a;
 
@@ -130,13 +130,25 @@ figure {
   --sl-color-hairline-shade: #1a1a1a;
 }
 
-/* Ensure good contrast for links */
+/* Ensure good contrast for links - light gray instead of blue */
 a {
-  color: #6b9bc3;
+  color: #b0b0b0;
 }
 
 a:hover {
-  color: #8bb5d8;
+  color: #d0d0d0;
+}
+
+/* Fix sidebar selected item */
+.sidebar a[aria-current="page"] {
+  background-color: #252525;
+  color: #e0e0e0;
+}
+
+/* Remove any blue highlights */
+::selection {
+  background-color: #404040;
+  color: #e0e0e0;
 }
 
 /* Fix any remaining light backgrounds with dark text */
@@ -165,4 +177,54 @@ td {
   background-color: #1a1a1a;
   border-color: #303030;
   color: #e0e0e0;
+}
+
+/* Force all text to be light colored - no black text anywhere */
+body, p, span, div, li, td, th, h1, h2, h3, h4, h5, h6, label {
+  color: #e0e0e0 !important;
+}
+
+/* Remove blue from headers */
+.sl-markdown-content h1,
+.sl-markdown-content h2,
+.sl-markdown-content h3,
+.sl-markdown-content h4,
+.sl-markdown-content h5,
+.sl-markdown-content h6 {
+  color: #e0e0e0 !important;
+}
+
+/* Fix strong/bold text */
+strong, b {
+  color: #e0e0e0 !important;
+}
+
+/* Fix list items */
+.sl-markdown-content li {
+  color: #e0e0e0 !important;
+}
+
+/* Fix navigation text */
+nav, nav a, nav span {
+  color: #b0b0b0 !important;
+}
+
+nav a:hover {
+  color: #d0d0d0 !important;
+}
+
+/* Remove blue from search */
+.search-input {
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+  border-color: #404040;
+}
+
+/* Fix header bar to light gray */
+header {
+  background-color: #1a1a1a !important;
+}
+
+.site-title {
+  color: #e0e0e0 !important;
 }
