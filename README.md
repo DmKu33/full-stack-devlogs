@@ -1,10 +1,5 @@
+# full-stack devlogs
 
-<!-- ![simple net art diagram](public/images/simple-net-art-diagram/simple-net-art-diagram-150w.png) -->
+tracking progress & learning for full-stack web development projects
 
-
-# DIG 345 - Radical Software
-
-Tutorials, demos, and resources for DIG 345 Radical Software
-
-
-https://omundy.github.io/dig345-radical-software/
+https://dmku33.github.io/full-stack-devlogs/
