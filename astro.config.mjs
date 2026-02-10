@@ -36,9 +36,6 @@ export default defineConfig({
 				'./src/styles/tailwind-overrides.css',
 			],
 			sidebar: [
-				// add sidebar links directly
-				{ label: 'Syllabus', link: './' },
-
 				// autogenerate sidebar links using folder/file names
 				{ label: 'Schedule', autogenerate: { directory: 'schedule' }, },
 			],
