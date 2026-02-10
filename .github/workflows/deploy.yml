@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout your repository using git
         uses: actions/checkout@v5
+      - name: Clear astro cache
+        run: rm -rf .astro node_modules/.astro
       - name: Install, build, and upload your site output
         uses: withastro/action@v5
         # with:
