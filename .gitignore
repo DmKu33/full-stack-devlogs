@@ -26,3 +26,6 @@ pnpm-debug.log*
 # Windows
 Thumbs.db
 desktop.ini
+
+# playground folder for devlog experiments
+playground/
