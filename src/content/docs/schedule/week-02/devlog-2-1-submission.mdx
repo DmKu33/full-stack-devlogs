@@ -19,12 +19,26 @@ For DevLog 2-1, you'll need to:
 Follow the [Astro Starlight](https://omundy.github.io/dig345-radical-software/tutorials/astro-starlight/) tutorial to create a JAMstack website with Astro.js. You will use this site to post DevLog entries to record your work throughout the semester.
 
 1. [Fork an Astro Starlight site](https://omundy.github.io/dig345-radical-software/tutorials/astro-starlight/#create-an-astro-starlight-site) and update project structure.
-1. Publish Astro Starlight using Github Actions ✏️ LINK_TO_YOUR_REPO
-1. Add custom CSS to your theme
-1. Import and use an Astro component
-1. Continue customizing your site using the [Starlight Docs](https://starlight.astro.build/getting-started/) and ✏️ explain what you did.
+1. Publish Astro Starlight using Github Actions ✏️ `https://github.com/dmku33/full-stack-devlogs` - Changed remote from fork to own repo, set up GitHub Actions deployment
+1. Add custom CSS to your theme ✏️ Switched to dark theme with black background and white text, removed all blue colors for a minimalist aesthetic
+1. Import and use an Astro component ✏️ Used existing Svelte components that came with the template
+1. Continue customizing your site using the [Starlight Docs](https://starlight.astro.build/getting-started/) and ✏️ Changed site title to "Full-Stack DevLogs", restructured weeks into separate folders with individual submission pages for better organization
 1. Add content into: `devlog-1-3.mdx` (the DevLog from the previous week)
 1. Add this file and `devlog-2-1.mdx` for today, and add content.
 1. Watch 🎬 Heydon Pickering [Why is everything binary?](https://www.youtube.com/watch?v=LbjxvvKEtyE). Post a reading response in the 2-1 DevLog per information in the [Assignments](/dig345-radical-software/assignments).
+
+**Video Response:** ✏️ The video essentially says that forcing complex topics into binary either/or choices when reality is more nuanced. This happens in tech (React vs Vue), design patterns, and broader discussions. The takeaway is to resist oversimplification as so many things exist on spectrums and accepting this notion leads to better design choices. Thus, it's better to think comprehensively instead of just picking "sides."
+
+- **Quote:** "It's called a transistor and it is very good at one thing in particular switching subject to a type of hormone called an electrical charge it is able to switch between off and on the resulting State represents a single bit of data"
+- **Extra comment:** While watching, I kept thinking about alternatives to the binary bit—like trits (ternary digits: 0, 1, and 2) and qubits. Qubits in particular embody the idea of a spectrum: until they’re observed, they can be in a superposition of states (a mix of 0 and 1 with certain probabilities), rather than a single fixed value. So in a sense, quantum computing already moves past the strict either/or of classical bits.
+- **Discussion question:** Do you think people expect us to move past tribalism only after we get some kind of augmentations or technological shift? And when do you see the next “computer age” arriving - will it be driven by a different kind of fundamental device (e.g. qubits, trits, or something else beyond the transistor)?
+- **Related technology:** [What is a Qubit?](https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-a-qubit) (Microsoft Azure)
+
+
 1. Write a reflection explaining what you did learned in this DevLog. Link to sources.
+
+**Reflection:** ✏️ Setting up the Astro Starlight site taught me about static site generation and GitHub Actions deployment. Ran into issues with GitHub Pages trying to run Jekyll builds, which I fixed by adding a `.nojekyll` file and disabling cache in the workflow. Restructuring the project into weekly folders with separate submission pages made navigation clearer. The dark theme customization was straightforward with CSS variables. The video reminded me of the importance of avoiding tribalism in general.
+
+**Sources:** [Astro Starlight Docs](https://starlight.astro.build/), [GitHub Actions Docs](https://docs.github.com/en/actions), [Jekyll on GitHub Pages](https://docs.github.com/en/pages/setting-up-a-github-pages-site-with-jekyll), Heydon Pickering video
+
 1. Publish it and turn it in by posting the direct link to this DevLog on Moodle
