@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bad Password API</title>
+
+    <!-- 👉 9.3 STARTER 
+    Title: Bad Password API Starter
+    Author: Owen Mundy
+    Date: 2024
+    License: MIT
+    -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Honk&family=Roboto+Mono&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div class="container-lg">
+        <form class="mb-5">
+            <div class="row my-3">
+                <div class="col-10 offset-1 text-center">
+                    <h1>Bad Password API</h1>
+                    <div class="row">
+                        <div class="col-12 col-md-8">
+                            <input type="text" id="password" class="w-100" data-bs-toggle="tooltip" data-bs-placement="auto" data-bs-custom-class="custom-tooltip" data-bs-title="...">
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <button type="submit" id="submit" class="w-100">New password</button>
+                        </div>
+                    </div>
+                    <div id="info"></div>
+                </div>
+            </div>
+            <div class="row my-3">
+                <div class="col-4 offset-2 text-left">
+                    <p>Group 1</p>
+
+                    <label class="custom-checkbox" for="endearments">
+                        endearments
+                        <input type="radio" id="endearments" name="group1" value="endearments" checked>
+                        <span class="checkmark"></span>
+                    </label>
+
+                    <label class="custom-checkbox" for="pets">
+                        pets
+                        <input type="radio" id="pets" name="group1" value="pets">
+                        <span class="checkmark"></span>
+                    </label>
+
+                    <label class="custom-checkbox" for="cities">
+                        cities
+                        <input type="radio" id="cities" name="group1" value="cities">
+                        <span class="checkmark"></span>
+                    </label>
+
+                </div>
+                <div class="col-4 text-left">
+                    <p>Group 2</p>
+                    <label class="custom-checkbox" for="dates">
+                        dates
+                        <input type="radio" id="dates" name="group2" value="dates" checked>
+                        <span class="checkmark"></span>
+                    </label>
+                    <label class="custom-checkbox" for="colors">
+                        colors
+                        <input type="radio" id="colors" name="group2" value="colors">
+                        <span class="checkmark"></span>
+                    </label>
+
+
+                    <label class="custom-checkbox" for="patterns">
+                        patterns
+                        <input type="radio" id="patterns" name="group2" value="patterns">
+                        <span class="checkmark"></span>
+                    </label>
+
+                </div>
+            </div>
+        </form>
+
+        <!-- Publishing info removed in starter -->
+
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="./assets/js/main.js"></script>
+    <!-- <script src="./assets/js/ui-flair.js"></script> -->
+
+</body>
+
+</html>
