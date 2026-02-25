@@ -13,7 +13,6 @@ import { URL } from "url";
 const __filename = new URL("", import.meta.url).pathname;
 const __dirname = new URL(".", import.meta.url).pathname;
 app.use(express.static(path.join(__dirname, '../public')));
-app.use(express.static(path.join(__dirname, '..'))); // serve index.html and assets from project root
 
 
 //////////////////////////////////////
