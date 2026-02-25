@@ -1,0 +1,25 @@
+{
+  "name": "big-feelings-starter",
+  "version": "1.0.0",
+  "description": "A simple Node Express Mongo Vercel Leaflet example",
+  "main": "api/index.js",
+  "author": "Owen Mundy and xtine burrough",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "node api/index.js",
+    "dev": "nodemon api/index.js"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
+    "express": "^5.2.1",
+    "mongodb": "^6.21.0",
+    "morgan-body": "^2.6.9"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11",
+    "vercel": "^50.11.0"
+  }
+}
