@@ -26,7 +26,20 @@ Use Node.js and MongoDB Atlas to create the back end for Big Feelings. Then publ
 1. Create an `.ENV` file, add your connection credentials, and test your database connection (CWD 10.4)
 1. Add routes to get data from MongoDB (CWD 10.4)
 1. Allow Visitors to Submit Feelings (CWD 10.4)
-1. Add an environment variable and deploy your project on Vercel. (CWD 10.4)
+1. Add an environment variable and deploy your project on Vercel. (CWD 10.4) ✏️ [https://full-stack-devlogs-fn5e.vercel.app](https://full-stack-devlogs-fn5e.vercel.app)
 1. Read 📚 [ICE Is Going on a Surveillance Shopping Spree](https://www.eff.org/deeplinks/2026/01/ice-going-surveillance-shopping-spree), EFF 2026. Post a reading response in your DevLog per information in the [Assignments](./#assignments).
-1. Write a reflection explaining what you did learned in your DevLog. Link to sources.
+
+**Reading Response:** ✏️ ICE’s huge budget is funding a surveillance package of phone cracking (Cellebrite, Paragon), location and social monitoring (Webloc, Tangles), ALPR, face recognition (Clearview), and Palantir-style data fusion. The article basically argues this undermines civil liberties and democracy.
+
+- **Quote:** "On a long enough timeline, any surveillance tool you build will eventually be used by people you don't like for reasons that you disagree with."
+- **Comment:** Directly relevant to our class, we’re learning to move and store data (frontend-backend). Who can use it and for what isn’t someone else’s problem - it’s a design and ethics choice.
+- **Discussion question:** Will this nation-wide data be used later for other purposes? 
+- **Related:** [top of anti-virus/spyware brands](https://bestantivirusbrands.com/spyware_USA_D_ENG.html) - maybe some of these are actually worthwhile, had some, but have to test it on some VM with proper spyware. 
+
+1. Write a reflection explaining what you did learned in your DevLog. Link to sources. ✏️
+
+**Reflection:** ✏️ Set up Big Feelings with MongoDB Atlas, `.env` for the connection string, and Express routes to read/write feelings. Wired the frontend form to POST to the API and deployed on Vercel with `MONGODB_URI` as an env var. Learned how backend data flow and API key management work in a real deploy.
+
+**Sources:** [CWD 10.4 Big Feelings](https://criticalwebdesign.github.io/wiki/chapter-10/10-4-big-feelings/), [MongoDB Atlas](https://www.mongodb.com/atlas), [Vercel](https://vercel.com/docs), [EFF – ICE surveillance spree](https://www.eff.org/deeplinks/2026/01/ice-going-surveillance-shopping-spree)
+
 1. Publish it on Vercel and turn it in by posting the direct link to this DevLog on Moodle
