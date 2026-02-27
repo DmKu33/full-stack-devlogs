@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Key Songs — Stranger Things & Sweden</title>
+  <script src="https://unpkg.com/@strudel/web@1.3.0/dist/index.js"></script>
+  <script>
+    window._strudelReady = initStrudel();
+    initAudioOnFirstClick();
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header { padding: 2rem 1rem 0.5rem; text-align: center; }
+    header h1 {
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #e0e0e0;
+    }
+    header p { margin-top: 0.4rem; font-size: 0.8rem; color: #666; letter-spacing: 0.08em; }
+
+    #controls {
+      display: flex;
+      gap: 0.6rem;
+      margin: 1.5rem 0 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn {
+      background: transparent;
+      border: 1px solid #444;
+      color: #aaa;
+      padding: 0.45rem 1.2rem;
+      font-family: inherit;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:hover { border-color: #fff; color: #fff; }
+    .btn.active { border-color: var(--accent); color: var(--accent); }
+    .btn.danger:hover { border-color: #e04040; color: #e04040; }
+    .btn-divider { width: 1px; background: #222; margin: 0 0.2rem; }
+
+    #waveform {
+      width: min(700px, 95vw);
+      height: 80px;
+      display: block;
+      margin: 0.8rem auto;
+    }
+
+    #status-line {
+      font-size: 0.7rem; color: #555; letter-spacing: 0.08em;
+      margin-bottom: 0.3rem; text-align: center; min-height: 1.2em;
+    }
+    #status-line span { color: #888; }
+    #status-line.lit span { color: var(--accent); }
+
+    #keyboard-wrap {
+      width: min(780px, 98vw);
+      margin: 0 auto 1.5rem;
+      user-select: none;
+    }
+    #keyboard { display: flex; height: 120px; }
+
+    .key {
+      flex: 1; min-width: 0;
+      border: 1px solid #222;
+      border-radius: 0 0 4px 4px;
+      background: #111;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding-bottom: 6px;
+      cursor: pointer;
+      transition: background 0.08s, box-shadow 0.08s;
+    }
+    .key .label { font-size: clamp(0.5rem,1.2vw,0.7rem); color: #444; letter-spacing: 0.05em; }
+    .key .note-label { font-size: clamp(0.45rem,1vw,0.6rem); color: #333; margin-top: 2px; }
+    .key.active { background: var(--accent-dim); box-shadow: 0 0 18px var(--accent); }
+    .key.active .label, .key.active .note-label { color: var(--accent); }
+
+    body.stranger { --accent: #e04040; --accent-dim: #2a0a0a; }
+    body.sweden    { --accent: #4fc3f7; --accent-dim: #071a24; }
+
+    #progress-wrap {
+      width: min(780px, 98vw); height: 2px;
+      background: #111; margin: -1rem auto 1rem;
+    }
+    #progress-bar { height: 100%; width: 0%; background: var(--accent); transition: width 0.15s linear; }
+
+    #particles {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 10;
+    }
+
+    #instructions {
+      max-width: 600px; text-align: center;
+      font-size: 0.65rem; color: #444;
+      line-height: 1.8; padding: 0 1rem 2rem;
+      letter-spacing: 0.05em;
+    }
+    #instructions strong { color: #777; }
+  </style>
+</head>
+<body class="stranger">
+
+<canvas id="particles"></canvas>
+
+<header>
+  <h1>Key Songs</h1>
+  <p>follow the melody or freestyle — your call</p>
+</header>
+
+<div id="controls">
+  <button class="btn active" data-song="stranger">Stranger Things</button>
+  <button class="btn" data-song="sweden">Sweden (Minecraft)</button>
+  <div class="btn-divider"></div>
+  <button class="btn" id="autoplay-btn">▶ autoplay</button>
+  <button class="btn" id="stop-btn" style="display:none">■ stop</button>
+  <button class="btn danger" id="reset-btn">↺ reset</button>
+</div>
+
+<canvas id="waveform" width="700" height="80"></canvas>
+<div id="status-line">next key: <span id="next-key-hint">—</span></div>
+
+<div id="keyboard-wrap">
+  <div id="keyboard"></div>
+</div>
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+
+<div id="instructions">
+  <strong>Freeplay:</strong> press keys to play notes — highlighted key = next melody note.<br>
+  <strong>Autoplay:</strong> sit back and watch the song play itself via Strudel.<br>
+  Hit any key during autoplay to take over. Switch songs anytime.
+</div>
+
+<script>
+// STRUDEL PATTERNS (FROM EEFANO COLLECTION)
+// Stranger Things pattern (setcps 0.7), no .play() in the string
+const STRANGER_PATTERN = `
+setcps(0.7)
+stack(
+  n("0 2 4 6 7 6 4 2")
+    .scale("<c3:major>/2")
+    .s("supersaw")
+    .distort(0.7)
+    .superimpose((x) => x.detune("<0.5>"))
+    .lpenv(perlin.slow(3).range(1, 4))
+    .lpf(perlin.slow(2).range(100, 2000))
+    .gain(0.3),
+  note("<a1 e2>/8").clip(0.8).struct("x*8").s("supersaw").gain(0.5)
+)
+`;
+
+// MELODY HINTS FOR FREEPLAY
+const MELODIES = {
+  stranger: ['c3','e3','g3','b3','c4','b3','g3','e3'],
+  // Sweden: MIDI-to-Strudel sequence (Emanuel-de-Jong GPL-3.0)
+  // Source MIDI: C418 Sweden by Carlo Prato (cprato.com)
+  // null = rest (16th note silence at 88 BPM)
+  sweden: [
+    'g3,b2,e3', null, 'a4,f#3', 'b4',
+    'a2,d4,a3,f#4', null, null, null, 'b2', null, 'd4', 'e4',
+    'a3,c#4,f#4', null, null, null, 'g3', null, 'f#3', 'a3',
+    'a3,c#4,e4,a2', null, null, null,
+    'g3,e4,g4,e3', 'd5', 'b4', 'a4',
+    'g2,a3,f#4,d4', null, null, null, 'b2', null, 'd4', 'e4',
+    'a3,c#4,f#4', null, null, null, 'f#3', null, 'a4', 'f#4',
+    'a2,a3,c#4,e4', null, null, null,
+    'b3,e4,g4,e3', null, 'a4,f#3', 'b4',
+    'f#4,d4,g2,a3,d5', null, null, null, 'b3', null, 'd4,f#5', 'e4,e5',
+    'a4,c#4,a3,c#5', null, null, null, 'g3', null, 'd5,f#4', 'c#5',
+    'a4', null, null, null,
+    'b3,g4,e4', null, 'b4,f#4', 'a4',
+    'a3,d5,a4,f#5', null, null, null, 'b3', null, 'd5', 'e5',
+    'a4,c#5,f#5', null, null, null, 'g4', null, 'f#4', 'a4',
+    'c#4,a3,e4', null, null, null,
+  ],
+};
+
+// GLOBAL STATE
+let currentSong = 'stranger';
+let melodyStep = 0;
+let isAutoplaying = false;
+let strudelReady = false;
+let autoProgressTimer = null;
+let autoplaySession = 0; // incremented on every stop to invalidate stale callbacks
+
+// STRUDEL SETUP
+// initStrudel() + prebake already called in inline script tag above
+window._strudelReady.then(() => { strudelReady = true; });
+
+// FREEPLAY WEB AUDIO (KEY PRESSES ONLY)
+let freeCtx = null;
+let freeAnalyser = null;
+let freeMaster = null;
+
+function getFreeAudio() {
+  if (!freeCtx) {
+    freeCtx = new (window.AudioContext || window.webkitAudioContext)();
+    freeAnalyser = freeCtx.createAnalyser();
+    freeAnalyser.fftSize = 1024;
+    freeMaster = freeCtx.createGain();
+    freeMaster.gain.value = 0.4;
+    freeMaster.connect(freeAnalyser);
+    freeAnalyser.connect(freeCtx.destination);
+  }
+  if (freeCtx.state === 'suspended') freeCtx.resume();
+  return { freeCtx, freeMaster };
+}
+
+function makeDistortionCurve(amount) {
+  const n = 256, curve = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const x = (i * 2) / n - 1;
+    curve[i] = ((Math.PI + amount) * x) / (Math.PI + amount * Math.abs(x));
+  }
+  return curve;
+}
+
+function playSupersaw(freq, duration = 0.22) {
+  const { freeCtx, freeMaster } = getFreeAudio();
+  const env = freeCtx.createGain();
+  const dist = freeCtx.createWaveShaper();
+  dist.curve = makeDistortionCurve(80);
+  const now = freeCtx.currentTime;
+  env.gain.setValueAtTime(0, now);
+  env.gain.linearRampToValueAtTime(0.15, now + 0.008);
+  env.gain.exponentialRampToValueAtTime(0.001, now + duration);
+  env.connect(dist);
+  dist.connect(freeMaster);
+  [-12,-6,0,6,12].forEach(det => {
+    const osc = freeCtx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.value = freq;
+    osc.detune.value = det;
+    osc.connect(env);
+    osc.start(now);
+    osc.stop(now + duration);
+  });
+}
+
+function playPiano(freq, duration = 1.4) {
+  const { freeCtx, freeMaster } = getFreeAudio();
+  const env = freeCtx.createGain();
+  const now = freeCtx.currentTime;
+  env.gain.setValueAtTime(0, now);
+  env.gain.linearRampToValueAtTime(0.3, now + 0.005);
+  env.gain.setTargetAtTime(0.001, now + 0.05, duration * 0.35);
+  [[1,1],[2,0.18],[3,0.07],[4.01,0.04]].forEach(([m, a]) => {
+    const osc = freeCtx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = freq * m;
+    const g = freeCtx.createGain();
+    g.gain.value = a;
+    osc.connect(g); g.connect(env);
+    osc.start(now); osc.stop(now + duration + 0.5);
+  });
+  env.connect(freeMaster);
+}
+
+function noteToFreq(note) {
+  const map = {c:0,'c#':1,db:1,d:2,'d#':3,eb:3,e:4,f:5,'f#':6,gb:6,g:7,'g#':8,ab:8,a:9,'a#':10,bb:10,b:11};
+  const m = note.trim().match(/^([a-g]#?)(\d)$/i);
+  if (!m) return 440;
+  const midi = (parseInt(m[2]) + 1) * 12 + map[m[1].toLowerCase()];
+  return 440 * Math.pow(2, (midi - 69) / 12);
+}
+
+function playFreeNote(noteStr) {
+  noteStr.split(',').forEach(n => {
+    const freq = noteToFreq(n.trim());
+    if (currentSong === 'stranger') playSupersaw(freq);
+    else playPiano(freq);
+  });
+}
+
+// KEYBOARD LAYOUT
+const ALL_KEYS = ['q','w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j','k','l'];
+const KEY_NOTES = {};
+ALL_KEYS.forEach((k, i) => {
+  const midi = 48 + i;
+  const freq = 440 * Math.pow(2, (midi - 69) / 12);
+  const names = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+  KEY_NOTES[k] = { freq, name: names[midi % 12] + Math.floor(midi / 12 - 1) };
+});
+
+const kbEl = document.getElementById('keyboard');
+function buildKeyboard() {
+  kbEl.innerHTML = '';
+  ALL_KEYS.forEach(k => {
+    const el = document.createElement('div');
+    el.className = 'key';
+    el.dataset.key = k;
+    el.innerHTML = `<span class="label">${k.toUpperCase()}</span><span class="note-label">${KEY_NOTES[k].name}</span>`;
+    el.addEventListener('mousedown', () => { if (isAutoplaying) stopAutoplay(); triggerKey(k); });
+    kbEl.appendChild(el);
+  });
+}
+buildKeyboard();
+
+function getKeyEl(k) { return kbEl.querySelector(`[data-key="${k}"]`); }
+
+// MELODY HINT LOGIC
+function getMelodyKeyForNote(noteStr) {
+  const target = noteToFreq(noteStr.split(',')[0].trim());
+  let best = null, bestDiff = Infinity;
+  for (const [k, { freq }] of Object.entries(KEY_NOTES)) {
+    const d = Math.abs(freq - target);
+    if (d < bestDiff) { bestDiff = d; best = k; }
+  }
+  return best;
+}
+
+function updateHint() {
+  const melody = MELODIES[currentSong];
+  const len = melody.length;
+  const idx = melodyStep % len;
+  // skip nulls (rests) to find next real note
+  let note = null;
+  for (let i = 0; i < len; i++) {
+    const entry = melody[(idx + i) % len];
+    if (entry !== null) { note = entry; break; }
+  }
+  const key = note ? getMelodyKeyForNote(note) : null;
+  document.getElementById('next-key-hint').textContent = key ? key.toUpperCase() : '—';
+  ALL_KEYS.forEach(k => {
+    const el = getKeyEl(k);
+    if (el) el.style.borderColor = k === key ? 'var(--accent)' : '';
+  });
+  document.getElementById('progress-bar').style.width = (idx / len * 100) + '%';
+}
+
+// FREEPLAY KEY TRIGGER
+const activeKeys = new Set();
+
+function triggerKey(k) {
+  if (activeKeys.has(k)) return;
+  activeKeys.add(k);
+
+  const melody = MELODIES[currentSong];
+  const len = melody.length;
+  // find next non-null note for hint comparison
+  let nextNote = null;
+  for (let i = 0; i < len; i++) {
+    const entry = melody[(melodyStep + i) % len];
+    if (entry !== null) { nextNote = entry; break; }
+  }
+  const nextKey = nextNote ? getMelodyKeyForNote(nextNote) : null;
+  const hit = k === nextKey;
+
+  if (hit) { melodyStep++; updateHint(); }
+
+  playFreeNote(KEY_NOTES[k].name.toLowerCase());
+  flashKey(k);
+  spawnParticles(k, hit);
+
+  const sl = document.getElementById('status-line');
+  if (hit) {
+    sl.classList.add('lit');
+    clearTimeout(sl._t);
+    sl._t = setTimeout(() => sl.classList.remove('lit'), 500);
+  }
+}
+
+function releaseKey(k) {
+  activeKeys.delete(k);
+  const el = getKeyEl(k);
+  if (el) el.classList.remove('active');
+}
+
+function flashKey(k) {
+  const el = getKeyEl(k);
+  if (!el) return;
+  el.classList.add('active');
+  setTimeout(() => el.classList.remove('active'), 280);
+}
+
+// AUTOPLAY LOGIC
+function startAutoplay() {
+  if (isAutoplaying) return;
+  isAutoplaying = true;
+  melodyStep = 0;
+  updateHint();
+  document.getElementById('autoplay-btn').style.display = 'none';
+  document.getElementById('stop-btn').style.display = '';
+
+  if (currentSong === 'stranger') {
+    if (!strudelReady) { stopAutoplay(); alert('Strudel still loading, try again.'); return; }
+    // Ensure AudioContext is running (browser autoplay policy requires user gesture)
+    try { initAudio(); } catch(e) {}
+    try { getAudioContext().resume(); } catch(e) {}
+    evaluate(STRANGER_PATTERN).catch(e => console.error('Strudel error:', e));
+    // Visual animation synced to cps 0.7, 8 notes/cycle
+    const melody = MELODIES.stranger;
+    const ms = 1000 / (0.7 * 8); // 179ms
+    const mySession = ++autoplaySession;
+    function animST() {
+      if (autoplaySession !== mySession) return;
+      const key = getMelodyKeyForNote(melody[melodyStep % melody.length]);
+      if (key) { flashKey(key); spawnParticles(key, true); }
+      melodyStep++;
+      updateHint();
+      autoProgressTimer = setTimeout(animST, ms);
+    }
+    animST();
+
+  } else {
+    // Sweden uses pure Web Audio sequencer, no Strudel needed
+    const seq = MELODIES.sweden;
+    const ms = (60 / 88) * 1000 / 4; // 16th note at 88 BPM ≈ 170ms
+    const mySession = ++autoplaySession;
+    function animSW() {
+      if (autoplaySession !== mySession) return;
+      const entry = seq[melodyStep % seq.length];
+      if (entry !== null) {
+        playFreeNote(entry);
+        const key = getMelodyKeyForNote(entry);
+        if (key) { flashKey(key); spawnParticles(key, true); }
+      }
+      melodyStep++;
+      updateHint();
+      autoProgressTimer = setTimeout(animSW, ms);
+    }
+    animSW();
+  }
+}
+
+function strudelStop() {
+  try { hush(); } catch(e) {}
+  setTimeout(() => { try { hush(); } catch(e) {} }, 60);
+}
+
+function stopAutoplay() {
+  autoplaySession++;
+  isAutoplaying = false;
+  clearTimeout(autoProgressTimer);
+  autoProgressTimer = null;
+  melodyStep = 0;
+  strudelStop();
+  updateHint();
+  document.getElementById('autoplay-btn').style.display = '';
+  document.getElementById('stop-btn').style.display = 'none';
+}
+
+document.getElementById('autoplay-btn').addEventListener('click', startAutoplay);
+document.getElementById('stop-btn').addEventListener('click', stopAutoplay);
+document.getElementById('reset-btn').addEventListener('click', () => {
+  stopAutoplay();
+  melodyStep = 0;
+  updateHint();
+});
+
+// SONG SWITCHING
+document.querySelectorAll('[data-song]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    stopAutoplay(); // always hush + reset buttons, even if not autoplaying
+    currentSong = btn.dataset.song;
+    melodyStep = 0;
+    document.querySelectorAll('[data-song]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.body.className = currentSong;
+    updateHint();
+  });
+});
+
+// KEYBOARD EVENTS
+document.addEventListener('keydown', e => {
+  if (e.repeat) return;
+  const k = e.key.toLowerCase();
+  if (!KEY_NOTES[k]) return;
+  if (isAutoplaying) stopAutoplay();
+  triggerKey(k);
+});
+document.addEventListener('keyup', e => releaseKey(e.key.toLowerCase()));
+
+// WAVEFORM (FREEPLAY AUDIO)
+const wfCanvas = document.getElementById('waveform');
+const wfCtx = wfCanvas.getContext('2d');
+const wfW = wfCanvas.width, wfH = wfCanvas.height;
+
+function drawWaveform() {
+  requestAnimationFrame(drawWaveform);
+  wfCtx.clearRect(0, 0, wfW, wfH);
+
+  const analyser = freeAnalyser;
+  if (!analyser) {
+    wfCtx.strokeStyle = '#1a1a1a'; wfCtx.lineWidth = 1;
+    wfCtx.beginPath(); wfCtx.moveTo(0, wfH/2); wfCtx.lineTo(wfW, wfH/2); wfCtx.stroke();
+    return;
+  }
+
+  const buf = new Uint8Array(analyser.fftSize);
+  analyser.getByteTimeDomainData(buf);
+  const accent = currentSong === 'stranger' ? '#e04040' : '#4fc3f7';
+  wfCtx.strokeStyle = accent;
+  wfCtx.lineWidth = 1.5;
+  wfCtx.shadowBlur = 8;
+  wfCtx.shadowColor = accent;
+  wfCtx.beginPath();
+  const sw = wfW / buf.length;
+  for (let i = 0; i < buf.length; i++) {
+    const y = wfH/2 + (buf[i]/128 - 1) * (wfH/2 - 4);
+    i === 0 ? wfCtx.moveTo(0, y) : wfCtx.lineTo(i * sw, y);
+  }
+  wfCtx.stroke();
+  wfCtx.shadowBlur = 0;
+}
+drawWaveform();
+
+// PARTICLE SYSTEM
+const pCanvas = document.getElementById('particles');
+const pCtx = pCanvas.getContext('2d');
+let particles = [];
+
+function resizeP() { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; }
+resizeP();
+window.addEventListener('resize', resizeP);
+
+function spawnParticles(k, onMelody) {
+  const el = getKeyEl(k);
+  if (!el) return;
+  const r = el.getBoundingClientRect();
+  const cx = r.left + r.width/2, cy = r.top + r.height/2;
+  const count = onMelody ? 18 : 6;
+  const color = currentSong === 'stranger' ? [224,64,64] : [79,195,247];
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = onMelody ? 2 + Math.random()*4 : 1 + Math.random()*2;
+    particles.push({
+      x: cx, y: cy,
+      vx: Math.cos(angle)*speed,
+      vy: Math.sin(angle)*speed - (onMelody ? 2 : 0.5),
+      life: 1, decay: onMelody ? 0.018 : 0.03,
+      size: onMelody ? 3+Math.random()*4 : 1.5+Math.random()*2,
+      color,
+    });
+  }
+}
+
+function animParticles() {
+  requestAnimationFrame(animParticles);
+  pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+  particles = particles.filter(p => p.life > 0);
+  for (const p of particles) {
+    p.x += p.vx; p.y += p.vy; p.vy += 0.08; p.life -= p.decay;
+    const [r,g,b] = p.color;
+    pCtx.beginPath();
+    pCtx.arc(p.x, p.y, Math.max(0, p.size * p.life), 0, Math.PI*2);
+    pCtx.fillStyle = `rgba(${r},${g},${b},${p.life})`;
+    pCtx.fill();
+  }
+}
+animParticles();
+
+// INITIALIZATION
+updateHint();
+</script>
+</body>
+</html>
