@@ -3,12 +3,39 @@ title: DevLog 6-3 Submission
 description: submission for week 6 devlog 6-3
 ---
 
-## Summary
-For DevLog 6-3, you'll need to:
-- Create an interactive 3D experience using Three.js
+## 1. Potential Project Ideas
 
-## Assignment Tasks
+### Idea 1: Tinder for Papers
 
-**Create an interactive experience with Three.js**
+A four-directional swipe interface for browsing AI research papers pulled from [AlphaXiv](https://alphaxiv.org/). AlphaXiv layers pre-generated summaries, method breakdowns, and key highlights on top of arXiv papers. The app would show a card with the paper title, a diagram or figure from the paper, a short abstract, and a one-paragraph summary. You swipe in four directions: right to read now, up to save for later, left to skip, down to archive or dismiss. The goal is to make staying current with AI research feel more like browsing than studying.
 
-(Tasks to be added based on tutorial content)
+**Links:**
+- https://alphaxiv.org/ — the paper discovery layer on top of arXiv with pre-generated summaries
+- https://arxiv.org/help/api/index — arXiv API for fetching paper metadata and abstracts
+- https://www.semanticscholar.org/product/api — Semantic Scholar API, alternative source with citation data and abstracts
+- https://hammerjs.github.io/ — Hammer.js for touch/swipe gesture detection
+- https://www.framer.com/motion/ — Framer Motion for card drag and directional snap animations
+
+---
+
+### Idea 2: Excuse Generator (Satirical)
+
+A satirical platform for auto-generating excuses for common life situations. You pick a scenario from a list (late to work, canceling plans, missing a deadline, breaking up with someone, ghosting a text) and the app generates a polished, contextually appropriate excuse. The tone is the joke: the UI is dead serious, professional, almost corporate, like a real productivity tool. Could include options for excuse "intensity" (mild / moderate / desperate) and a one-click copy button.
+
+**Links:**
+- https://platform.openai.com/docs/api-reference — OpenAI API for generating excuse text
+- https://sdk.vercel.ai/docs — Vercel AI SDK for streaming text responses in Next.js
+- https://ui.shadcn.com/ — shadcn/ui for building the deadpan professional UI
+- https://www.theonion.com/ — The Onion as a tonal reference for satirical straight-faced writing
+
+---
+
+## 2. Which Idea I'm Leaning Toward
+
+Both are doable in a week. The excuse generator is simpler technically (one API call, minimal state) but funnier as a concept. The paper swiper is more technically interesting (gesture handling, external API, card stack UI) and more personally useful. Leaning toward the paper swiper because the interaction model is genuinely novel and the data source (AlphaXiv) is rich enough to make it feel real.
+
+---
+
+## 3. Concerns
+
+The paper swiper's main risk is the data pipeline: arXiv's API returns raw metadata but not the AlphaXiv-style summaries, so I'd either need to scrape AlphaXiv or generate summaries myself with the OpenAI API, which adds cost and latency. The swipe gesture logic also needs to feel good on both desktop (drag) and mobile (touch), which takes tuning. For the excuse generator, the main concern is that it's too simple and ends up feeling like a one-joke demo with no depth.
