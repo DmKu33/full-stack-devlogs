@@ -1,0 +1,45 @@
+---
+title: Key Songs - About
+description: About page for the DevLog 5-3 interactive sound project
+---
+
+import { Image } from 'astro:assets';
+
+## Key Songs: Stranger Things & Sweden
+
+**[→ Open the interactive experience](/full-stack-devlogs/keyboard-songs/)**
+
+![Screenshot of Key Songs — Sweden mode with particles and waveform](/full-stack-devlogs/images/keyboard-songs-screenshot.png)
+
+<video controls src="/full-stack-devlogs/images/keyboard-songs-demo.mov" style="width:100%;max-width:700px" />
+
+---
+
+### Concept & Technology
+
+The inspiration came from thinking about how educational tools like music learning apps work, and how a live studio environment could let someone actually practice performing a song in real time. The idea was to map chromatic notes across the keyboard so each key always makes a sound, but the highlighted key tells you which one comes next in the melody. The goal is that you can listen to the full autoplay first to hear how the song goes, then stop it and try to follow along yourself with the key hints guiding you.
+
+Two songs are included: the *Stranger Things* 8-note synth motif and C418's *Sweden* from Minecraft (converted from MIDI using the MIDI-to-Strudel converter, then manually adjusted). A future version could include more songs, variable playback speed, and the ability to loop specific sections to practice harder parts.
+
+The audio engine is built entirely on the Web Audio API with no external sound library. Each keypress creates oscillators with an ADSR envelope applied via `GainNode` ramps. The Stranger Things synth uses a supersaw stack (5 detuned sawtooth oscillators + a `WaveShaper` for distortion), while Sweden uses a piano-like timbre built from sine harmonics. The real-time oscilloscope waveform is drawn on a `<canvas>` using `AnalyserNode` time-domain data on every animation frame. A particle system fires on keypress, with more particles when you hit the correct melody note.
+
+Autoplay for Sweden runs as a pure Web Audio sequencer (16th notes at 88 BPM). Autoplay for Stranger Things uses Strudel's `evaluate()` to run a pattern, with a parallel `setTimeout` loop driving the visual animation. One known issue: stopping the Strudel pattern mid-playback does not always cut the audio cleanly because Strudel's internal audio graph persists after `hush()` is called. Sweden stops cleanly because it uses only native Web Audio nodes that can be fully controlled. The Strudel stop issue does not affect freeplay or Sweden, and a page refresh resets everything, so it is left as a known limitation for now.
+
+---
+
+### Reflection
+
+Building the oscilloscope and particle system directly on canvas taught me how `AnalyserNode` exposes time-domain data in real time, and how small envelope tweaks (attack/decay timing) dramatically change the feel of a synthesized note. Mapping a melody to a visual keyboard hint made me think about how interaction design can guide a user without forcing them into a single path.
+
+---
+
+### Sources
+
+- [Sound & Music tutorial](/dig345-radical-software/tutorials/sound-music)
+- [Strudel workshop](https://strudel.cc/workshop/first-sounds/)
+- [Strudel device motion](https://strudel.cc/learn/devicemotion/)
+- [Strudel input devices](https://strudel.cc/learn/input-devices/)
+- [MIDI to Strudel — Emanuel-de-Jong (GPL-3.0)](https://github.com/Emanuel-de-Jong/MIDI-To-Strudel)
+- [awesome-strudel — terryds](https://github.com/terryds/awesome-strudel)
+- [C418 Sweden MIDI — Carlo Prato (cprato.com)](https://www.cprato.com/en/midi/details/391/c418-sweden-minecraft-main-theme)
+- [Web Audio API — MDN](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
