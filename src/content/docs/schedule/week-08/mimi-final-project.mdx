@@ -1,0 +1,86 @@
+---
+title: Mimi - Final Project
+description: Updated proposal and final project documentation for Mimi
+---
+
+## Links
+
+- **Live project:** [mimi-production-7022.up.railway.app](https://mimi-production-7022.up.railway.app/)
+- **About page:** [mimi-production-7022.up.railway.app/about](https://mimi-production-7022.up.railway.app/about)
+- **Repository:** [github.com/DmKu33/mimi](https://github.com/DmKu33/mimi)
+- **Original week 6 proposal:** [Devlog 6 Submission](../week-06/devlog-6-submission/)
+- **Figma layouts:** [Mimi-Cry](https://www.figma.com/design/m9BY7nfdb4fTTV2eAEzfjv/Mimi-Cry?node-id=0-1&t=bnSH3nRFqRxQd1g5-1)
+
+---
+
+## Screenshots
+
+![Mimi interface showing the shared persona library and current selected persona](/full-stack-devlogs/images/mimi-screenshot-1.png)
+
+![Mimi interface showing a generated persona-style response in the output panel](/full-stack-devlogs/images/mimi-screenshot-2.png)
+
+---
+
+## Project Video
+
+<video controls src="/full-stack-devlogs/images/mimi-demo.mov" style="width:100%;max-width:900px" />
+
+Sorry, this screencast runs about **2:30** instead of **1:30**.
+
+---
+
+## Updated Proposal
+
+In week 6, the final project idea was a **persona-based satirical rewriter** that would scrape a public figure's posts, cache their style data, and then let a user rewrite text in that voice. That idea stayed intact, but the project shifted from a one-off text transformation tool into a small reusable persona system.
+
+The current version of **Mimi** has a shared library of public personas, lightweight private drafts before publishing, streaming generation through Grok, and a prompt-building pipeline that uses both a style summary and representative post excerpts. The app can either reuse a persona already in the library or scrape a new one from public X data, then store the resulting context for later use.
+
+The project became less about novelty in the raw joke and more about designing a system where **voice itself becomes an interface layer**.
+
+---
+
+## Flow
+
+```text
+user types text
+  ↓
+select persona from shared library
+or scrape a new one from X
+  ↓
+store as shared persona or private draft
+  ↓
+assemble prompt from style summary
++ representative post excerpts
+  ↓
+stream Grok output back into the interface
+```
+
+---
+
+## Concept And Execution
+
+Mimi is a satirical interface for routing the same input through different public voices. The conceptual interest is not only in impersonation or parody, but in what happens when tone becomes a selectable system component. Instead of treating a model prompt as invisible infrastructure, the project makes persona construction visible. The user can see that a voice is not just one sentence of prompt engineering but a built artifact made from public writing, cached examples, and interface decisions.
+
+Technically, the project is built as a Bun server with a plain HTML, CSS, and JavaScript frontend. Neon Postgres stores personas, shared library entries, and draft states. xAI search tools are used to find public X accounts and gather representative posts, while Grok handles the final text generation. The prompt-building logic now uses both a style summary and longer post excerpts so outputs stay closer to the original writing habits of the selected person rather than drifting into generic “AI impression” territory.
+
+The interface direction became intentionally restrained. Earlier versions had more visible panel treatments and alternate mockups, but the final design leans toward a quieter console-like surface so the user focuses on the persona, the source material, and the output. In that sense, the project combines satire, prompt engineering, and interface design into one system where content generation and design structure are tightly linked.
+
+---
+
+## Progress
+
+- Built a live working prototype with Bun and Neon.
+- Added a shared persona library plus lightweight private drafts before publishing.
+- Added persona scraping through xAI search tools and avatar lookup through the X Developer API.
+- Improved generation quality by storing representative posts and feeding them into the persona prompt.
+- Added an About page, live deployment, and final project documentation links.
+
+---
+
+## Future Work
+
+- Add real auth instead of device-level draft ownership.
+- Add a full persona detail view showing summary, source posts, and saved prompt context.
+- Improve atomic publishing and deduplication for shared personas.
+- Add basic admin controls for hiding, deleting, or featuring personas.
+- Add rate limiting and moderation if the project moves beyond internal alpha.
